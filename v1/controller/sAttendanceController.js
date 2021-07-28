@@ -11,8 +11,8 @@ exports.createAttendance = async(req,res)=>{
     const attendance = await Attendance.create(req.body);
     await Attendance.updateOne({studentId:req.body.studentId},{present:true})
     res.json({
-        
-        msg:'attendance submitted successfully'
+        msg:'attendance submitted successfully',
+        data:attendance
     })
 };
 
@@ -34,7 +34,7 @@ exports.findAttendance = async(req,res)=>{
     if(attendance){
         return res.json({
             msg:'attendance found',
-            attendance
+            data:attendance
         })
     }
     res.json({
@@ -48,7 +48,7 @@ exports.updateAttendance = async(req,res)=>{
     if(updation){
         return res.json({
             msg:'attendance updated successfully',
-            updation
+            data:updation
         })
     }
     res.josn({
@@ -60,7 +60,8 @@ exports.deleteAttendance = async(req,res)=>{
     const remove  = await Attendance.deleteOne({_id:req.params.id});
     if(remove){
        return res.json({
-           msg:'attendance deleted'
+           msg:'attendance deleted',
+           data:remove
        })
     }
     res.josn({

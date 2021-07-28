@@ -17,7 +17,7 @@ exports.addTeacher = async(req,res)=>{
     await Otp.create({email:req.body.email,otp:otp})
     res.json({
         msg:'teacher added',
-        otp
+        data:otp
     })
 };
 
@@ -63,7 +63,7 @@ exports.changePassword = async(req,res)=>{
             {password: hashPassword},{new:true});
             return res.json({
                 msg:'password changed',
-                updation
+                data:updation
             })
     }
 
@@ -81,7 +81,7 @@ exports.forgetPassword = async(req,res)=>{
         {password:hashPassword},{new:true});
         res.json({
             msg:'password created',
-            updation
+            data:updation
         })
 }
 exports.findTeacher = async(req,res)=>{
@@ -97,7 +97,7 @@ exports.findTeacher = async(req,res)=>{
     if(teacher){
    return res.json({
         msg:'teacher found',
-        teacher
+        data:teacher
     })
 }
 res.json({
@@ -109,7 +109,8 @@ exports.updateTeacher = async(req,res)=>{
  const updation = await Teacher.findOneAndUpdate({email:req.body.email},req.body,{new:true});
  if(updation){
      return res.json({
-         msg:'teacher updated'
+         msg:'teacher updated',
+         data:updation
      })
  }
  res.json({
@@ -121,7 +122,8 @@ exports.deleteTeacher = async(req,res)=>{
     const remove = await Teacher.deleteOne({_id:req.params.id});
     if(remove){
         return res.json({
-            msg:'teacher deleted'
+            msg:'teacher deleted',
+            data:remove
         })
     }
     res.json({
@@ -146,6 +148,6 @@ exports.login = async(req,res)=>{
     let token = jwt.sign({id:isEmail._id},"asdfghjkl",{expiresIn:"2h"});
     res.json({
         msg:'login successfully',
-        token
+        data:token
     })
 }

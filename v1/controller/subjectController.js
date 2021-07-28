@@ -10,7 +10,7 @@ exports.addsubject = async(req,res)=>{
   const subject=  await Subject.create(req.body);
     res.json({
         msg:'subject added',
-        subject
+        data:subject
     })
 }
 
@@ -22,7 +22,7 @@ exports.findSubject = async(req,res)=>{
     if(subject){
         return res.json({
             msg:'subject found',
-            subject
+            data:subject
         })
     }
     res.json({
@@ -35,7 +35,7 @@ exports.updateSubject = async(req,res)=>{
     if(updation){
         return res.json({
             msg:'updated successfully',
-            updation
+            data:updation
         })
     }
     res.json({
@@ -47,7 +47,8 @@ exports.deleteSubject = async(req,res)=>{
     const remove = await Subject.deleteOne({_id:req.params.id});
     if(remove){
        return res.json({
-            msg:'delted successfully'
+            msg:'delted successfully',
+            data:remove
         })
     }   
     res.json({

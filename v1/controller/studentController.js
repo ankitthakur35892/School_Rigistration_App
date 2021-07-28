@@ -15,13 +15,13 @@ exports.newStudent = async (req,res)=>{
     const salt = await bcrypt.genSalt(10);
         const hashPassword = await bcrypt.hash(req.body.password, salt);
         req.body.password = hashPassword;
-    await Student.create(req.body); 
+   const student= await Student.create(req.body); 
     await Otp.create({email:req.body.email,otp:otp})
    const count= await Student.countDocuments();
-  const updation= await Class.findOneAndUpdate({_id:req.body.classId},{classStrength:count},{new:true});
+   await Class.findOneAndUpdate({_id:req.body.classId},{classStrength:count},{new:true});
     res.json({
         msg:'new student added',
-        otp
+        data:otp,student
     })
     } catch (error) {
         console.log(error);
@@ -68,7 +68,7 @@ exports.changePassword = async(req,res)=>{
             {password: hashPassword},{new:true});
             return res.json({
                 msg:'password changed',
-                updation
+                data:updation
             })
     }
 
@@ -86,7 +86,7 @@ exports.forgetPassword = async(req,res)=>{
         {password:hashPassword},{new:true});
         res.json({
             msg:'password created',
-            updation
+            data:updation
         })
 }
 exports.findStudent = async(req,res)=>{
@@ -103,7 +103,7 @@ exports.findStudent = async(req,res)=>{
     const student  = await Student.find(query);
     res.json({
         msg:'Student is:',
-        student
+        data:student
     })
 };
 
@@ -132,7 +132,8 @@ if(!remove){
     })
 }
 res.json({
-    msg:'student deleted'
+    msg:'student deleted',
+    data:remove
 })
 }
 
@@ -154,7 +155,7 @@ exports.login = async (req,res)=>{
     let token = jwt.sign({id:isEmail._id},"asdfghjkl",{expiresIn:"2h"});
     res.json({
         msg:'login successfully',
-        token
+        data:token
     })
   } catch (error) {
       console.log(error);

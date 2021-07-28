@@ -10,15 +10,16 @@ exports.newClass = async (req,res)=>{
    const className= await Class.create(req.body);
     res.json({
         msg:'class created',
-        className
+        data:className
     })
 };
 
 exports.findClass = async(req,res)=>{
-    const isExist = await Class.find({standard:req.body.standard});
-    if(isExist){
+    const findClass = await Class.find({standard:req.body.standard});
+    if(findClass){
         return res.json({
-            msg:'class found'
+            msg:'class found',
+            data:findClass
         })
     }
     res.json({
@@ -29,9 +30,10 @@ exports.findClass = async(req,res)=>{
 exports.updateClass = async(req,res)=>{
     const isExist = await Class.find({standard:req.body.standard});
     if(isExist){
-        await Class.updateOne({standard:req.body.standard},req.body,{new:true});
+      const updation=  await Class.updateOne({standard:req.body.standard},req.body,{new:true});
         return res.json({
-            msg:'class updated'
+            msg:'class updated',
+            data:updation
         }) 
     }
     res.json({
@@ -42,9 +44,10 @@ exports.updateClass = async(req,res)=>{
 exports.deleteClass = async(req,res)=>{
     const isExist = await Class.find({standard:req.body.standard});
     if(isExist){
-        await Class.deleteOne({standard:req.params.standard});
+      const remove =  await Class.deleteOne({_id:req.params.id});
         return res.json({
-            msg:'class deleted'
+            msg:'class deleted',
+            data:remove
         })
     }
     res.json({

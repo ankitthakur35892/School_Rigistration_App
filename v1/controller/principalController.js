@@ -17,7 +17,7 @@ exports.addPrincipal = async(req,res)=>{
     await Otp.create({email:req.body.email,otp})
     res.json({
         msg:'added successfully',
-        otp
+        data:otp
     })
 }
 
@@ -62,7 +62,7 @@ exports.changePassword = async(req,res)=>{
             {password: hashPassword},{new:true});
             return res.json({
                 msg:'password changed',
-                updation
+                data:updation
             })
     }
 
@@ -80,7 +80,7 @@ exports.forgetPassword = async(req,res)=>{
         {password:hashPassword},{new:true});
         res.json({
             msg:'password created',
-            updation
+            data:updation
         })
 }
 
@@ -96,7 +96,7 @@ exports.findPrincipal = async(req,res)=>{
     const principal  = await Principal.find(query);
     res.json({
         msg:'Principal is:',
-        principal
+        data:principal
     })
 };
 
@@ -106,7 +106,7 @@ exports.updatePrincipal= async(req,res)=>{
     if(updation){
         return res.json({
             msg:'principal updated',
-            new:updation
+            data:updation
         })
     }
     res.json({
@@ -125,7 +125,8 @@ if(!remove){
     })
 }
 res.json({
-    msg:'principal deleted'
+    msg:'principal deleted',
+    data:remove
 })
 }
 
@@ -147,7 +148,7 @@ exports.login = async (req,res)=>{
     let token = jwt.sign({id:isEmail._id},"asdfghjkl",{expiresIn:"2h"});
     res.json({
         msg:'login successfully',
-        token
+        data:token
     })
   } catch (error) {
       console.log(error);
