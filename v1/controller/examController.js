@@ -1,21 +1,30 @@
 const Exam = require('../../models/examModel');
 
 exports.createExam = async(req,res)=>{
-    const isExam = await Exam.findOne({classId:req.body.classId,subjectId:req.body.subjectId});
-    if(isExam){
+   try{
+        const isExam = await Exam.findOne({classId:req.body.classId,subjectId:req.body.subjectId});
+    if(!isExam){
+        req.body.date = new Date(req.body.date);
         const exam = await Exam.create(req.body)
         return res.json({
             msg:'exam created',
             data:exam
         })
     }
+    res.json({
+        msg:'exam exist already'
+    })
+}catch(err){
+    console.log(err);
+    res.send(err)
+}
 };
 
 exports.findExam = async(req,res)=>{
-    let {subjectId,classId,date}=req.query;
+    let {subject,classId,date}=req.query;
     let query = {};
     if(subject&&classId){
-        query={subjectId:subjectId,classId:classId};
+        query={subjectId:subject,classId:classId};
     }
     else{
         query:{date:date};

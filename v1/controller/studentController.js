@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const Student = require('../../models/studentModel');
 const Class = require('../../models/classModel');
 const Otp = require('../../models/otpModel')
-var otp = 8462829239;
+var otp = 846239;
 exports.newStudent = async (req,res)=>{
     try {
         const email = await Student.findOne({email:req.body.email});
@@ -21,8 +21,7 @@ exports.newStudent = async (req,res)=>{
    await Class.findOneAndUpdate({_id:req.body.classId},{classStrength:count},{new:true});
     res.json({
         msg:'new student added',
-        msg2:'otp sent',
-        data:otp,student
+        data:student
     })
     } catch (error) {
         console.log(error);
@@ -49,13 +48,13 @@ exports.verifyOtp = async(req,res)=>{
 }
 
 exports.changePassword = async(req,res)=>{
-    const isEmail = await Student.findOne({email:req.body.email});
-    if(!isEmail){
+    const student = await Student.findOne({_id:req.decoded.id});
+    if(!student){
         return res.json({
-            msg:'email not found'
+            msg:'student not exist'
         })
     }
-    const paswd = isEmail.password;
+    const paswd = student.password;
     const compare = await bcrypt.compare(req.body.password,paswd);
     if(!compare){
         return res.json({
@@ -64,7 +63,7 @@ exports.changePassword = async(req,res)=>{
     }
         const salt = await bcrypt.genSalt(10);
         const hashPassword = await bcrypt.hash(req.body.newPassword,salt);
-        const updation = await Student.findOneAndUpdate({email:req.body.email},
+        const updation = await Student.findByIdAndUpdate(student,
             {password: hashPassword},{new:true});
             return res.json({
                 msg:'password changed',
@@ -74,15 +73,15 @@ exports.changePassword = async(req,res)=>{
 
 
 exports.forgetPassword = async(req,res)=>{
-    const isEmail = await Student.findOne({email:req.body.email});
-    if(!isEmail){
+    const student = await Student.findOne({_id:req.decoded.id});
+    if(!student){
         return res.json({
             msg:'email not found'
         })
     }
     const salt =await bcrypt.genSalt(10);
     const hashPassword = await bcrypt.hash(req.body.newPassword,salt);
-    const updation = await Student.findOneAndUpdate({email:req.body.email},
+    const updation = await Student.findByIdAndUpdate(student,
         {password:hashPassword},{new:true});
         res.json({
             msg:'password created',

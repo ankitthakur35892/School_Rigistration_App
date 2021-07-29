@@ -44,13 +44,13 @@ exports.verifyOtp = async(req,res)=>{
 }
 
 exports.changePassword = async(req,res)=>{
-    const isEmail = await Teacher.findOne({email:req.body.email});
-    if(!isEmail){
+    const teacher = await Teacher.findOne({_id:req.decoded.id});
+    if(!teacher){
         return res.json({
-            msg:'email not found'
+            msg:'teacher not found'
         })
     }
-    const paswd = isEmail.password;
+    const paswd = teacher.password;
     const compare = await bcrypt.compare(req.body.password,paswd);
     if(!compare){
         return res.json({
@@ -60,7 +60,7 @@ exports.changePassword = async(req,res)=>{
         const salt = await bcrypt.genSalt(10);
         const hashPassword = await bcrypt.hash(req.body.newPassword,salt);
         console.log(hashPassword);
-        const updation = await Teacher.findOneAndUpdate({email:req.body.email},
+        const updation = await Teacher.findByIdAndUpdate(teacher,
             {password: hashPassword},{new:true});
             return res.json({
                 msg:'password changed',
@@ -70,15 +70,15 @@ exports.changePassword = async(req,res)=>{
 
 
 exports.forgetPassword = async(req,res)=>{
-    const isEmail = await Teacher.findOne({email:req.body.email});
-    if(!isEmail){
+    const teacher = await Teacher.findOne({_id:req.decoded.id})
+    if(!teacher){
         return res.json({
-            msg:'email not found'
+            msg:'teacher not found'
         })
     }
     const salt =await bcrypt.genSalt(10);
     const hashPassword = await bcrypt.hash(req.body.newPassword,salt);
-    const updation = await Teacher.findOneAndUpdate({email:req.body.email},
+    const updation = await Teacher.findByIdAndUpdate(teacher,
         {password:hashPassword},{new:true});
         res.json({
             msg:'password created',

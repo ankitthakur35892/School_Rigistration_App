@@ -5,6 +5,6 @@ const router = express.Router();
 router.post('/',examController.createExam);
 router.get('/',examController.findExam);
 router.put('/',examController.updateExam);
-router.delete('/',examController.deleteExam);
+router.delete('/:id',examController.deleteExam);
 
 module.exports = router;
