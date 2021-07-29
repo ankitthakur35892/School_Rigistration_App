@@ -13,11 +13,12 @@ exports.addTeacher = async(req,res)=>{
     const salt = await bcrypt.genSalt(10);
     const hashPassword = await bcrypt.hash(req.body.password, salt);
     req.body.password = hashPassword;
-    await Teacher.create(req.body);
+    const teacher =  await Teacher.create(req.body);
     await Otp.create({email:req.body.email,otp:otp})
     res.json({
         msg:'teacher added',
-        data:otp
+        msg2:'otp sent',
+        data:otp,teacher
     })
 };
 

@@ -2,6 +2,8 @@ const Attendance = require('../../models/teacherAttendance');
 
 
 exports.createAttendance = async(req,res)=>{
+    try{
+    req.body.date = new Date(req.body.date)
     const isExist = await Attendance.findOne({teacherId:req.body.teacherId,date:req.body.date});
     if(isExist){
         return res.json({
@@ -9,11 +11,14 @@ exports.createAttendance = async(req,res)=>{
         })
     }
     const attendance = await Attendance.create(req.body);
-    await Attendance.updateOne({teacherId:req.body.teacherId},{present:true})
     res.json({
         msg:'attendance submitted successfully',
         data:attendance
     })
+    }catch(err){
+        console.log(err);
+        res.send(err)
+    }
 };
 
 exports.findAttendance = async(req,res)=>{

@@ -42,12 +42,11 @@ exports.updateClass = async(req,res)=>{
 }
 
 exports.deleteClass = async(req,res)=>{
-    const isExist = await Class.find({standard:req.body.standard});
+    const isExist = await Class.findById({_id:req.params.id});
     if(isExist){
       const remove =  await Class.deleteOne({_id:req.params.id});
         return res.json({
-            msg:'class deleted',
-            data:remove
+            msg:'class deleted'
         })
     }
     res.json({

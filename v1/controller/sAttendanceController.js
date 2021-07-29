@@ -2,18 +2,23 @@ const mongoose = require('mongoose');
 const Attendance = require('../../models/studentAttendance');
 
 exports.createAttendance = async(req,res)=>{
-    const isExist = await Attendance.findOne({subjectId:req.body.subjectId,studentId:req.body.studentId,date:req.body.date});
+    try{
+        req.body.date = new Date(req.body.date)
+    const isExist = await Attendance.findOne({studentId: req.body.studentId, date: req.body.date});
     if(isExist){
         return res.json({
             msg:'attendance submitted already'
         })
     }
-    const attendance = await Attendance.create(req.body);
-    await Attendance.updateOne({studentId:req.body.studentId},{present:true})
+    const attendance =await Attendance.create(req.body);
     res.json({
         msg:'attendance submitted successfully',
         data:attendance
     })
+}catch(err){
+    console.log(err)
+    res.send(err)
+}
 };
 
 exports.findAttendance = async(req,res)=>{
@@ -57,6 +62,7 @@ exports.updateAttendance = async(req,res)=>{
 };
 
 exports.deleteAttendance = async(req,res)=>{
+  try {
     const remove  = await Attendance.deleteOne({_id:req.params.id});
     if(remove){
        return res.json({
@@ -67,4 +73,8 @@ exports.deleteAttendance = async(req,res)=>{
     res.josn({
         msg:'attendance not found'
     })
+
+  } catch (error) {
+      console.log(error);
+  } 
 }

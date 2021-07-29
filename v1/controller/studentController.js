@@ -21,6 +21,7 @@ exports.newStudent = async (req,res)=>{
    await Class.findOneAndUpdate({_id:req.body.classId},{classStrength:count},{new:true});
     res.json({
         msg:'new student added',
+        msg2:'otp sent',
         data:otp,student
     })
     } catch (error) {
@@ -63,7 +64,6 @@ exports.changePassword = async(req,res)=>{
     }
         const salt = await bcrypt.genSalt(10);
         const hashPassword = await bcrypt.hash(req.body.newPassword,salt);
-        console.log(hashPassword);
         const updation = await Student.findOneAndUpdate({email:req.body.email},
             {password: hashPassword},{new:true});
             return res.json({
@@ -109,7 +109,7 @@ exports.findStudent = async(req,res)=>{
 
 exports.updateStudent= async(req,res)=>{
  try {
-    const updation = await Student.findOneAndUpdate({rollNo:req.body.rollNo},req.body,{new:true});
+    const updation = await Student.findOneAndUpdate({email:req.body.email},req.body,{new:true});
     if(updation){
         return res.json({
             msg:'student updated',
@@ -125,7 +125,8 @@ exports.updateStudent= async(req,res)=>{
 }
 
 exports.deleteStudent = async(req,res)=>{
-  const remove = await Student.deleteOne({_id:req.params.id});
+  try{
+    const remove = await Student.deleteOne({_id:req.params.id});
 if(!remove){
     return res.json({
         msg:'student not found'
@@ -135,6 +136,10 @@ res.json({
     msg:'student deleted',
     data:remove
 })
+}catch(err){
+    console.log(err);
+    res.send(err)
+}
 }
 
 exports.login = async (req,res)=>{

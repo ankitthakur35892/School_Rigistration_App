@@ -17,7 +17,8 @@ exports.addPrincipal = async(req,res)=>{
     await Otp.create({email:req.body.email,otp})
     res.json({
         msg:'added successfully',
-        data:otp
+        msg2:'otp sent',
+        data:otp,principal
     })
 }
 
