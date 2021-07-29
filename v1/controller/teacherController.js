@@ -91,7 +91,6 @@ exports.changePassword = async(req,res)=>{
     }
         const salt = await bcrypt.genSalt(10);
         const hashPassword = await bcrypt.hash(req.body.newPassword,salt);//hashing password
-        console.log(hashPassword);
         const updation = await Teacher.findByIdAndUpdate(teacher,
             {password: hashPassword},{new:true});//update password
             return res.json({
