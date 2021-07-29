@@ -22,43 +22,55 @@ exports.createAttendance = async(req,res)=>{
 };
 
 exports.findAttendance = async(req,res)=>{
-    // console.log(req.query);
-    let {student,subject,date}=req.query;
-    let query = {};
-    if(student){
-        query = {studentId:student}
-    }
-    else if(subject){
-        query={subjectId:subject}
-    }
-    else{
-        query={date:date}
-    }
-    const attendance = await Attendance.find(query);
-    console.log(attendance);
-    if(attendance){
-        return res.json({
-            msg:'attendance found',
-            data:attendance
+    try {
+        let {student,subject,date}=req.query;
+        let query = {};
+        if(student){
+            query = {studentId:student}
+        }
+        else if(subject){
+            query={subjectId:subject}
+        }
+        else{
+            query={date:date}
+        }
+        const attendance = await Attendance.find(query);
+        console.log(attendance);
+        if(attendance){
+            return res.json({
+                msg:'attendance found',
+                data:attendance
+            })
+        }
+        res.json({
+            msg:'attendance not found'
         })
-    }
-    res.json({
-        msg:'attendance not found'
-    })
+    } catch (error) {
+        console.log(error);
+        res.send(error)
+        
+    }   
+    
 };
 
 exports.updateAttendance = async(req,res)=>{
-    const updation = await Attendance.findOneAndUpdate({subjectId:req.body.subjectId,
-        studentId:req.body.studentId},req.body,{new:true})
-    if(updation){
-        return res.json({
-            msg:'attendance updated successfully',
-            data:updation
+    try {
+        const updation = await Attendance.findOneAndUpdate({subjectId:req.body.subjectId,
+            studentId:req.body.studentId},req.body,{new:true})
+        if(updation){
+            return res.json({
+                msg:'attendance updated successfully',
+                data:updation
+            })
+        }
+        res.josn({
+            msg:'attendance not found'
         })
-    }
-    res.josn({
-        msg:'attendance not found'
-    })
+    } catch (error) {
+        console.log(error);
+        res.send(error)
+        
+    }    
 };
 
 exports.deleteAttendance = async(req,res)=>{

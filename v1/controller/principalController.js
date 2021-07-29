@@ -4,89 +4,114 @@ const Otp = require('../../models/otpModel')
 const bcrypt = require('bcrypt');
 const otp = 127438293;
 exports.addPrincipal = async(req,res)=>{
-    const isExist = await Principal.findOne({email:req.body.email});
-    if(isExist){
-        return res.json({
-            msg:'principal exist already'
+    try {
+        const isExist = await Principal.findOne({email:req.body.email});
+        if(isExist){
+            return res.json({
+                msg:'principal exist already'
+            })
+        }
+        const salt = await bcrypt.genSalt(10);
+        const hashPassword = await bcrypt.hash(req.body.password, salt);
+        req.body.password = hashPassword;
+        const principal = await Principal.create(req.body);
+        await Otp.create({email:req.body.email,otp})
+        res.json({
+            msg:'added successfully',
+            msg2:'otp sent',
+            data:otp,principal
         })
-    }
-    const salt = await bcrypt.genSalt(10);
-    const hashPassword = await bcrypt.hash(req.body.password, salt);
-    req.body.password = hashPassword;
-    const principal = await Principal.create(req.body);
-    await Otp.create({email:req.body.email,otp})
-    res.json({
-        msg:'added successfully',
-        msg2:'otp sent',
-        data:otp,principal
-    })
+    } catch (error) {
+        console.log(error);
+        res.send(error)
+        
+    }  
 }
 
 
 exports.verifyOtp = async(req,res)=>{
-    const isEmail = await Otp.findOne({email:req.body.email});
-    const isOtp = await Otp.findOne({otp:req.body.otp})
-    if(!isEmail){
-        return res.json({
-            msg:'email not exist'
+    try {
+        const isEmail = await Otp.findOne({email:req.body.email});
+        const isOtp = await Otp.findOne({otp:req.body.otp})
+        if(!isEmail){
+            return res.json({
+                msg:'email not exist'
+            })
+        }
+        else if(!isOtp){
+            return res.json({
+                msg:'incorrect otp'
+            })
+        }
+        await Principal.findOneAndUpdate({email:req.body.email},{isVerified:true},{new:true})
+        res.json({
+            msg:'principal verified'
         })
-    }
-    else if(!isOtp){
-        return res.json({
-            msg:'incorrect otp'
-        })
-    }
-    await Principal.findOneAndUpdate({email:req.body.email},{isVerified:true},{new:true})
-    res.json({
-        msg:'principal verified'
-    })
+    } catch (error) {
+        console.log(error);
+        res.send(error)
+        
+    }    
 }
 
 exports.changePassword = async(req,res)=>{
-    const principal = await Principal.findOne({_id:req.decoded.id})
-    if(!principal){
-        return res.json({
-            msg:'principal not found'
-        })
-    }
-    const paswd = isEmail.password;
-    const compare = await bcrypt.compare(req.body.password,paswd);
-    if(!compare){
-        return res.json({
-            msg:'incorrect password'
-        })
-    }
-        const salt = await bcrypt.genSalt(10);
-        const hashPassword = await bcrypt.hash(req.body.newPassword,salt);
-        console.log(hashPassword);
-        const updation = await Principal.findByIdAndUpdate(principal,
-            {password: hashPassword},{new:true});
+    try {
+        const principal = await Principal.findOne({_id:req.decoded.id})
+        if(!principal){
             return res.json({
-                msg:'password changed',
-                data:updation
+                msg:'principal not found'
             })
+        }
+        const paswd = isEmail.password;
+        const compare = await bcrypt.compare(req.body.password,paswd);
+        if(!compare){
+            return res.json({
+                msg:'incorrect password'
+            })
+        }
+            const salt = await bcrypt.genSalt(10);
+            const hashPassword = await bcrypt.hash(req.body.newPassword,salt);
+            console.log(hashPassword);
+            const updation = await Principal.findByIdAndUpdate(principal,
+                {password: hashPassword},{new:true});
+                return res.json({
+                    msg:'password changed',
+                    data:updation
+                })
+    } catch (error) {
+        console.log(error);
+        res.send(error)
+        
+    }    
     }
 
 
 exports.forgetPassword = async(req,res)=>{
-    const principal = await Principal.findOne({_id:req.decoded.id});
-    if(!principal){
-        return res.json({
-            msg:'principal not found'
-        })
-    }
-    const salt =await bcrypt.genSalt(10);
-    const hashPassword = await bcrypt.hash(req.body.newPassword,salt);
-    const updation = await Principal.findByIdAndUpdate(principal,
-        {password:hashPassword},{new:true});
-        res.json({
-            msg:'password created',
-            data:updation
-        })
+    try {
+        const principal = await Principal.findOne({_id:req.decoded.id});
+        if(!principal){
+            return res.json({
+                msg:'principal not found'
+            })
+        }
+        const salt =await bcrypt.genSalt(10);
+        const hashPassword = await bcrypt.hash(req.body.newPassword,salt);
+        const updation = await Principal.findByIdAndUpdate(principal,
+            {password:hashPassword},{new:true});
+            res.json({
+                msg:'password created',
+                data:updation
+            })
+    } catch (error) {
+        console.log(error);
+        res.send(error)
+        
+    }  
 }
 
 exports.findPrincipal = async(req,res)=>{
-    let {name,email}=req.query;
+    try {
+        let {name,email}=req.query;
     let query = {};
     if(name){
        query={principalName:name};
@@ -99,7 +124,12 @@ exports.findPrincipal = async(req,res)=>{
         msg:'Principal is:',
         data:principal
     })
-};
+
+    } catch (error) {
+        console.log(error);
+        res.send(error)
+        
+    } };
 
 exports.updatePrincipal= async(req,res)=>{
  try {

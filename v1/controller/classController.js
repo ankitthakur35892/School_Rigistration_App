@@ -1,7 +1,7 @@
 const Class = require('../../models/classModel');
 
 exports.newClass = async (req,res)=>{
-    const isExist = await Class.findOne({standard:req.body.standard});
+  try{  const isExist = await Class.findOne({standard:req.body.standard});
     if(isExist){
         return res.json({
             msg:'class already exist'
@@ -12,10 +12,14 @@ exports.newClass = async (req,res)=>{
         msg:'class created',
         data:className
     })
+}catch(err){
+    console.log(err);
+    res.send(err)
+}
 };
 
 exports.findClass = async(req,res)=>{
-    const findClass = await Class.find({standard:req.body.standard});
+  try{  const findClass = await Class.find({standard:req.body.standard});
     if(findClass){
         return res.json({
             msg:'class found',
@@ -25,10 +29,14 @@ exports.findClass = async(req,res)=>{
     res.json({
         msg:'class not found'
     })
+}catch(err){
+    console.log(err);
+    res.send(err)
+}
 }
 
 exports.updateClass = async(req,res)=>{
-    const isExist = await Class.find({standard:req.body.standard});
+  try{  const isExist = await Class.find({standard:req.body.standard});
     if(isExist){
       const updation=  await Class.updateOne({standard:req.body.standard},req.body,{new:true});
         return res.json({
@@ -39,10 +47,14 @@ exports.updateClass = async(req,res)=>{
     res.json({
         msg:'class not found'
     })
+}catch(err){
+    console.log(err);
+    res.send(err)
+}
 }
 
 exports.deleteClass = async(req,res)=>{
-    const isExist = await Class.findById({_id:req.params.id});
+  try{  const isExist = await Class.findById({_id:req.params.id});
     if(isExist){
       const remove =  await Class.deleteOne({_id:req.params.id});
         return res.json({
@@ -52,4 +64,8 @@ exports.deleteClass = async(req,res)=>{
     res.json({
         msg:'class not found'
     })
+}catch(err){
+    console.log(err);
+    res.json(err)
+}
 }

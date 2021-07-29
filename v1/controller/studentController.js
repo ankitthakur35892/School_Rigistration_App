@@ -29,7 +29,13 @@ exports.newStudent = async (req,res)=>{
 };
 
 exports.verifyOtp = async(req,res)=>{
-    const isEmail = await Otp.findOne({email:req.body.email});
+    try {
+      
+    } catch (error) {
+        console.log(error);
+        res.send(error)
+        
+    }  const isEmail = await Otp.findOne({email:req.body.email});
     const isOtp = await Otp.findOne({otp:req.body.otp})
     if(!isEmail){
         return res.json({
@@ -48,7 +54,13 @@ exports.verifyOtp = async(req,res)=>{
 }
 
 exports.changePassword = async(req,res)=>{
-    const student = await Student.findOne({_id:req.decoded.id});
+    try {
+      
+    } catch (error) {
+        console.log(error);
+        res.send(error)
+        
+    }   const student = await Student.findOne({_id:req.decoded.id});
     if(!student){
         return res.json({
             msg:'student not exist'
@@ -73,7 +85,13 @@ exports.changePassword = async(req,res)=>{
 
 
 exports.forgetPassword = async(req,res)=>{
-    const student = await Student.findOne({_id:req.decoded.id});
+    try {
+      
+    } catch (error) {
+        console.log(error);
+        res.send(error)
+        
+    }   const student = await Student.findOne({_id:req.decoded.id});
     if(!student){
         return res.json({
             msg:'email not found'
@@ -89,7 +107,13 @@ exports.forgetPassword = async(req,res)=>{
         })
 }
 exports.findStudent = async(req,res)=>{
-    let {name,rollNo,email}=req.query;
+    try {
+      
+    } catch (error) {
+        console.log(error);
+        res.send(error)
+        
+    }   let {name,rollNo,email}=req.query;
     let query = {};
     if(name){
        query={studentName:name};

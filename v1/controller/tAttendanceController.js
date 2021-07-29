@@ -22,48 +22,66 @@ exports.createAttendance = async(req,res)=>{
 };
 
 exports.findAttendance = async(req,res)=>{
-    let {teacher,date}=req.query;
-    let query = {};
-    if(teacher){
-        query = {teacherId:teacher}
-    }
-    else{
-        query={date:date}
-    }
-    const attendance = await Attendance.find(query);
-    if(attendance){
-        return res.json({
-            msg:'attendance found',
-            data:attendance
+    try {
+        let {teacher,date}=req.query;
+        let query = {};
+        if(teacher){
+            query = {teacherId:teacher}
+        }
+        else{
+            query={date:date}
+        }
+        const attendance = await Attendance.find(query);
+        if(attendance){
+            return res.json({
+                msg:'attendance found',
+                data:attendance
+            })
+        }
+        res.json({
+            msg:'attendance not found'
         })
-    }
-    res.json({
-        msg:'attendance not found'
-    })
+    } catch (error) {
+        console.log(error);
+        res.send(error)
+        
+    }  
 };
 
 exports.updateAttendance = async(req,res)=>{
-    const updation = await Attendance.findOneAndUpdate({teacherId:req.body.teacherId},req.body,{new:true})
-    if(updation){
-        return res.json({
-            msg:'attendance updated successfully',
-            data:updation
+    try {
+        const updation = await Attendance.findOneAndUpdate({teacherId:req.body.teacherId},req.body,{new:true})
+        if(updation){
+            return res.json({
+                msg:'attendance updated successfully',
+                data:updation
+            })
+        }
+        res.json({
+            msg:'attendance not found'
         })
-    }
-    res.json({
-        msg:'attendance not found'
-    })
+    } catch (error) {
+        console.log(error);
+        res.send(error)
+        
+    }  
 };
 
 exports.deleteAttendance = async(req,res)=>{
-    const remove  = await Attendance.deleteOne({_id:req.params.id});
-    if(remove){
-       return res.json({
-           msg:'attendance deleted',
-           data:remove
-       })
-    }
-    res.josn({
-        msg:'attendance not found'
-    })
+    try {
+        const remove  = await Attendance.deleteOne({_id:req.params.id});
+        if(remove){
+           return res.json({
+               msg:'attendance deleted',
+               data:remove
+           })
+        }
+        res.josn({
+            msg:'attendance not found'
+        })
+    } catch (error) {
+        console.log(error);
+        res.send(error)
+        
+    }   
 }
