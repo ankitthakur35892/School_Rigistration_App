@@ -6,7 +6,7 @@ router.post('/',              studentController.newStudent);
 router.post('/verify',        studentController.verifyOtp);
 router.post('/login',         studentController.login);
 router.post('/changePassword',middleware.verifyToken,studentController.changePassword);
-router.post('/forgetPassword',middleware.verifyToken,studentController.forgetPassword);
+router.post('/forgetPassword',studentController.forgetPassword);
 router.get('/',               middleware.verifyToken,studentController.findStudent);
 router.put('/',               middleware.verifyToken,studentController.updateStudent);
 router.delete('/:id',         middleware.verifyToken,studentController.deleteStudent);

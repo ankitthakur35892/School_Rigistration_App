@@ -1,16 +1,16 @@
 const Attendance = require('../../models/teacherAttendance');
 
-
+// add new attendance
 exports.createAttendance = async(req,res)=>{
     try{
     req.body.date = new Date(req.body.date)
-    const isExist = await Attendance.findOne({teacherId:req.body.teacherId,date:req.body.date});
+    const isExist = await Attendance.findOne({teacherId:req.body.teacherId,date:req.body.date});//finding attendance
     if(isExist){
         return res.json({
             msg:'attendance submitted already'
         })
     }
-    const attendance = await Attendance.create(req.body);
+    const attendance = await Attendance.create(req.body);//creating attendance
     res.json({
         msg:'attendance submitted successfully',
         data:attendance
@@ -21,6 +21,7 @@ exports.createAttendance = async(req,res)=>{
     }
 };
 
+// find attendance
 exports.findAttendance = async(req,res)=>{
     try {
         let {teacher,date}=req.query;
@@ -31,7 +32,7 @@ exports.findAttendance = async(req,res)=>{
         else{
             query={date:date}
         }
-        const attendance = await Attendance.find(query);
+        const attendance = await Attendance.find(query);//finding attendance by query
         if(attendance){
             return res.json({
                 msg:'attendance found',
@@ -47,10 +48,11 @@ exports.findAttendance = async(req,res)=>{
         
     }  
 };
-
+// update attendance
 exports.updateAttendance = async(req,res)=>{
     try {
-        const updation = await Attendance.findOneAndUpdate({teacherId:req.body.teacherId},req.body,{new:true})
+        const updation = await Attendance.findByIdAndUpdate({teacherId:req.body.teacherId},
+            req.body,{new:true})//updating attendance
         if(updation){
             return res.json({
                 msg:'attendance updated successfully',
@@ -66,10 +68,10 @@ exports.updateAttendance = async(req,res)=>{
         
     }  
 };
-
+// delete attendance
 exports.deleteAttendance = async(req,res)=>{
     try {
-        const remove  = await Attendance.deleteOne({_id:req.params.id});
+        const remove  = await Attendance.deleteOne({_id:req.params.id});//delte attendance by id
         if(remove){
            return res.json({
                msg:'attendance deleted',

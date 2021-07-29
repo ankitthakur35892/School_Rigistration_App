@@ -4,7 +4,7 @@ exports.verifyToken = async(req, res, next) => {
     const token = req.headers['token']
     await jwt.verify(token, 'asdfghjkl', (err, decoded) => {
         if (err) {
-            return res.json({
+            return res.status(401).json({
                 msg: 'invalid token'
             })
         }

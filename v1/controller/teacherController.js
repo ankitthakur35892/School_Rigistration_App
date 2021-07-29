@@ -2,7 +2,8 @@ const Teacher = require('../../models/teacherModel');
 const Otp = require('../../models/otpModel');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const otp = 8436762387;
+const otp = 842387;
+// add new teacher
 exports.addTeacher = async(req,res)=>{
   try{  const isEmail = await Teacher.findOne({email:req.body.email});
     if(isEmail){
@@ -25,9 +26,7 @@ exports.addTeacher = async(req,res)=>{
     res.send(err)
 }
 };
-
-
-
+// verify teacher
 exports.verifyOtp = async(req,res)=>{
   try{  const isEmail = await Otp.findOne({email:req.body.email});
     const isOtp = await Otp.findOne({otp:req.body.otp})
@@ -50,26 +49,51 @@ exports.verifyOtp = async(req,res)=>{
     res.send(err)
 }
 }
-
+// login teacher
+exports.login = async(req,res)=>{
+    try{ const isEmail = await Teacher.findOne({email:req.body.email});//finding teacher by email
+    const paswd = isEmail.password;
+    const compare = await bcrypt.compare(req.body.password,paswd);//comparing password
+    if(!isEmail){
+        return res.json({
+            msg:'email not exist'
+        })
+    }
+    else if(!compare){
+        return res.json({
+            msg:'incorrect password'
+        })
+    }
+    let token = jwt.sign({id:isEmail._id},"asdfghjkl",{expiresIn:"2h"});//token
+    res.json({
+        msg:'login successfully',
+        data:token
+    })
+}catch(err){
+    console.log(err);
+    res.send(err)
+}
+}
+// change password
 exports.changePassword = async(req,res)=>{
-  try{  const teacher = await Teacher.findOne({_id:req.decoded.id});
+  try{  const teacher = await Teacher.findOne({_id:req.decoded.id});//finding by id
     if(!teacher){
         return res.json({
             msg:'teacher not found'
         })
     }
     const paswd = teacher.password;
-    const compare = await bcrypt.compare(req.body.password,paswd);
+    const compare = await bcrypt.compare(req.body.password,paswd);//compare password
     if(!compare){
         return res.json({
             msg:'incorrect password'
         })
     }
         const salt = await bcrypt.genSalt(10);
-        const hashPassword = await bcrypt.hash(req.body.newPassword,salt);
+        const hashPassword = await bcrypt.hash(req.body.newPassword,salt);//hashing password
         console.log(hashPassword);
         const updation = await Teacher.findByIdAndUpdate(teacher,
-            {password: hashPassword},{new:true});
+            {password: hashPassword},{new:true});//update password
             return res.json({
                 msg:'password changed',
                 data:updation
@@ -80,18 +104,18 @@ exports.changePassword = async(req,res)=>{
         }
     }
 
-
+// forget password
 exports.forgetPassword = async(req,res)=>{
- try{   const teacher = await Teacher.findOne({_id:req.decoded.id})
+ try{   const teacher = await Teacher.findOne({email:req.body.email})//find teacher by email
     if(!teacher){
         return res.json({
             msg:'teacher not found'
         })
     }
     const salt =await bcrypt.genSalt(10);
-    const hashPassword = await bcrypt.hash(req.body.newPassword,salt);
+    const hashPassword = await bcrypt.hash(req.body.newPassword,salt);//hah password
     const updation = await Teacher.findByIdAndUpdate(teacher,
-        {password:hashPassword},{new:true});
+        {password:hashPassword},{new:true});//updaing teacher
         res.json({
             msg:'password created',
             data:updation
@@ -101,6 +125,7 @@ exports.forgetPassword = async(req,res)=>{
         res.send(err)
     }
 }
+// find teacher
 exports.findTeacher = async(req,res)=>{
   try { let {name,email} = req.query;
     let query = {};
@@ -110,7 +135,7 @@ exports.findTeacher = async(req,res)=>{
     else{
         query={email:email}
     }
-    const teacher = await Teacher.find(query);
+    const teacher = await Teacher.find(query);//finding teacher by query
     if(teacher){
    return res.json({
         msg:'teacher found',
@@ -125,10 +150,10 @@ res.json({
       res.send(err)
   }
 };
-
+// update teacher
 exports.updateTeacher = async(req,res)=>{
 try{
-     const updation = await Teacher.findOneAndUpdate({email:req.body.email},req.body,{new:true});
+     const updation = await Teacher.findOneAndUpdate({email:req.body.email},req.body,{new:true});//updating
  if(updation){
      return res.json({
          msg:'teacher updated',
@@ -143,10 +168,10 @@ try{
     res.send(err)
 }
 };
-
+// delete teacher
 exports.deleteTeacher = async(req,res)=>{
  try {
-    const remove = await Teacher.deleteOne({_id:req.params.id});
+    const remove = await Teacher.deleteOne({_id:req.params.id});//delete teacher by id
     if(remove){
         return res.json({
             msg:'teacher deleted',
@@ -161,28 +186,3 @@ exports.deleteTeacher = async(req,res)=>{
      console.log(error);
      res.send(err)
  }   }
-
-exports.login = async(req,res)=>{
-   try{ const isEmail = await Teacher.findOne({email:req.body.email});
-    const paswd = isEmail.password;
-    const compare = await bcrypt.compare(req.body.password,paswd);
-    if(!isEmail){
-        return res.json({
-            msg:'email not exist'
-        })
-    }
-    else if(!compare){
-        return res.json({
-            msg:'incorrect password'
-        })
-    }
-    let token = jwt.sign({id:isEmail._id},"asdfghjkl",{expiresIn:"2h"});
-    res.json({
-        msg:'login successfully',
-        data:token
-    })
-}catch(err){
-    console.log(err);
-    res.send(err)
-}
-}
